@@ -1,0 +1,15 @@
+[tasks.tailwind]
+command = "tailwindcss"
+args = ["-i", "./src/input.css", "-o", "./static/build.css"]
+
+[tasks.run]
+command = "cargo"
+args = ["run"]
+
+[tasks.full-build]
+dependencies = ["tailwind", "run"]
+
+[tasks.watch]
+command = "watchexec"
+args = ["-r", "-w", "src", "-e", "rs", "--", "cargo make full-build"]
+
