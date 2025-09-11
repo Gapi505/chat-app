@@ -156,16 +156,20 @@ async fn login_page() -> Markup{
                 script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"{}
             }
             body class="bg-gray-900 text-white" {
-                div {
-                }
-                form hx-post="/login" hx-target="#response" hx-swap="outerHTML"{
-                    input name="username";
-                    input type="password" name="password";
-                    button type="submit"{
-                        "Login"
+                div class="flex h-screen"{
+                    div class="bg-gray-800 p-16 m-auto rounded-3xl shadow-2xl justify-center content-center" {
+                        form hx-post="/login" hx-target="#response" hx-swap="outerHTML" class="flex flex-col"{
+                            input name="username" class="bg-gray-700 px-8 py-4 rounded-xl my-2";
+                            input type="password" name="password" class="bg-gray-700 px-8 py-4 rounded-xl my-2";
+                            button type="submit"
+                            class="bg-gray-900 py-4 rounded-xl mt-8 w-2/3 object-center mx-auto hover:w-full transition-all hover:bg-gray-700
+                            shadow-xl hover:shadow-2xl hover:shadow-black"{
+                                "Login"
+                            }
+                        }
+                        div id="response" {}
                     }
                 }
-                div id="response" {}
             }
         }
     }
