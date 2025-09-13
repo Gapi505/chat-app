@@ -1,0 +1,4 @@
+static
+target
+Cargo.lock
+sqlite.db
