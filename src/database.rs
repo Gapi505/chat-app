@@ -1,4 +1,4 @@
-use sqlx::{migrate::MigrateDatabase, sqlite::SqliteRow, FromRow, Sqlite, SqlitePool, Row};
+use sqlx::{migrate::MigrateDatabase, FromRow, Sqlite, SqlitePool, Row};
 
 pub const DB_URL: &str = "sqlite://sqlite.db";
 pub async fn create_db() {
@@ -39,20 +39,18 @@ pub struct DbUser{
 pub async fn get_users() -> Vec<DbUser> {
 
     let db = SqlitePool::connect(DB_URL).await.unwrap();
-    let user_results = sqlx::query_as::<_, DbUser>("SELECT * from users").fetch_all(&db).await.unwrap();
-    user_results
+    sqlx::query_as::<_, DbUser>("SELECT * from users").fetch_all(&db).await.unwrap()
 }
 pub async fn get_sessions() -> Vec<String> {
     let db = SqlitePool::connect(DB_URL).await.unwrap();
     let sessions = sqlx::query("select session_token from sessions").fetch_all(&db).await.unwrap();
     let sessions: Vec<String> = sessions.iter().map(|row| {
-        let token = row.get::<String, &str>("session_token");
-        token
+        row.get::<String, &str>("session_token")
     }).collect();
     sessions
 }
 
 pub async fn add_session_token(token: &String, user_id: &i64) {
     let db = SqlitePool::connect(DB_URL).await.unwrap();
-    sqlx::query("insert into sessions (session_token, user_id) values (?, ?)").bind(&token).bind(&user_id).execute(&db).await.unwrap();
+    sqlx::query("insert into sessions (session_token, user_id) values (?, ?)").bind(token).bind(user_id).execute(&db).await.unwrap();
 }

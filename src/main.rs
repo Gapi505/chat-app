@@ -1,8 +1,8 @@
 use axum::{
-    http::{header, HeaderMap, HeaderName, StatusCode}, response::{IntoResponse, Redirect}, routing::{get, post}, Form, Router
+    http::StatusCode, response::{IntoResponse, Redirect}, routing::{get, post}, Router
 };
-use maud::{html, Markup, DOCTYPE};
-use axum_extra::extract::{cookie::Cookie, CookieJar};
+use maud::html;
+use axum_extra::extract::CookieJar;
 
 mod database;
 mod components;

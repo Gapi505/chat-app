@@ -1,8 +1,8 @@
 use axum::{
-    http::{header, HeaderMap, HeaderName, StatusCode}, response::{IntoResponse, Redirect}, Form 
+    http::{header, HeaderMap}, response::IntoResponse, Form 
 };
-use maud::{html, Markup, DOCTYPE};
-use axum_extra::extract::{cookie::Cookie, CookieJar};
+use maud::{html, Markup};
+use axum_extra::extract::{cookie::Cookie};
 use serde::Deserialize;
 use uuid::Uuid;
 use super::base::base;
@@ -10,7 +10,7 @@ use super::base::base;
 
 use crate::database;
 
-pub async fn validate_session_cookie<'a>(session: Option<&'a Cookie<'_>>) -> bool {
+pub async fn validate_session_cookie(session: Option<&Cookie<'_>>) -> bool {
     if session.is_none() {return false;}
     let sessions = database::get_sessions().await;
     for token in sessions.iter(){
@@ -18,8 +18,7 @@ pub async fn validate_session_cookie<'a>(session: Option<&'a Cookie<'_>>) -> boo
             return true;
         }
     }
-    return false;
-
+    false
 }
 
 pub async fn login(Form(userlogin): Form<UserLogin>) -> impl IntoResponse { // Changed return type
@@ -27,8 +26,12 @@ pub async fn login(Form(userlogin): Form<UserLogin>) -> impl IntoResponse { // C
     let users = database::get_users().await;
     let user = users.iter().find(|user| {user.username == userlogin.username});
     let mut fail = false;
-    if user.is_none() { fail = true}
-    else if user.unwrap().password != userlogin.password {
+    if let Some(user) = user {
+        if user.password != userlogin.password {
+            fail = true;
+        }
+    }
+    else {
         fail = true;
     }
     if fail{
@@ -43,7 +46,7 @@ pub async fn login(Form(userlogin): Form<UserLogin>) -> impl IntoResponse { // C
     }
     let token = Uuid::new_v4().hyphenated().to_string();
     
-    database::add_session_token(&token, &user.unwrap().id);
+    database::add_session_token(&token, &user.unwrap().id).await;
 
     let mut headers = HeaderMap::new();
 
