@@ -54,3 +54,8 @@ pub async fn add_session_token(token: &String, user_id: &i64) {
     let db = SqlitePool::connect(DB_URL).await.unwrap();
     sqlx::query("insert into sessions (session_token, user_id) values (?, ?)").bind(token).bind(user_id).execute(&db).await.unwrap();
 }
+
+pub async fn add_user(username: &String, password: &String) {
+    let db = SqlitePool::connect(DB_URL).await.unwrap();
+    sqlx::query("insert into users (username, password) values (?, ?)").bind(username).bind(password).execute(&db).await.unwrap();
+}

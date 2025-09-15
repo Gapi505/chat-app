@@ -21,6 +21,7 @@ async fn main() {
         .route("/login", get(login::login_page))
         .route("/login", post(login::login))
         .route("/register", get(register::register_page))
+        .route("/register", post(register::register))
         .nest_service("/static", stat);
     let listener = tokio::net::TcpListener::bind("0.0.0.0:5000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
