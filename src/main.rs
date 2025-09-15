@@ -9,6 +9,7 @@ mod components;
 
 use components::base::base;
 use components::login;
+use components::register;
 
 
 #[tokio::main]
@@ -19,6 +20,7 @@ async fn main() {
         .route("/", get(index))
         .route("/login", get(login::login_page))
         .route("/login", post(login::login))
+        .route("/register", get(register::register_page))
         .nest_service("/static", stat);
     let listener = tokio::net::TcpListener::bind("0.0.0.0:5000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
