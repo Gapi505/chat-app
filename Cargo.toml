@@ -13,3 +13,4 @@ serde = {version="1", features=["derive"]}
 axum-extra = {version = "0.10", features=["cookie"]}
 sqlx = {version="0.8", features=["runtime-tokio", "sqlite"]}
 uuid = {version="1.18", features=["v4"]}
+argon2 = {version="0.5", features=["std"]}

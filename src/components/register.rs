@@ -1,7 +1,14 @@
 use axum::{http::HeaderMap, response::IntoResponse, Form};
 use maud::{html, Markup};
 use serde::Deserialize;
-use crate::base;
+use crate::{base, database::add_user};
+use argon2::{
+    password_hash::{
+        rand_core::OsRng,
+        PasswordHasher,SaltString
+    },
+    Argon2
+};
 
 pub async fn register(Form(register_user): Form<RegisterUser>) -> impl IntoResponse {
     let mut headers = HeaderMap::new();
@@ -10,6 +17,19 @@ pub async fn register(Form(register_user): Form<RegisterUser>) -> impl IntoRespo
         html!{
                 p class="text-rose-600 text-sm font-bold mt-1" id="response"{
                 "passwords must match"
+            }
+        }
+        ).into_response();
+    }
+    let salt = SaltString::generate(&mut OsRng);
+    let hash = Argon2::default().hash_password(register_user.password.as_bytes(), &salt).unwrap().to_string();
+    let res = add_user(&register_user.username,&hash).await;
+    if let Err(e) = res{
+    
+        return (headers,
+        html!{
+                p class="text-rose-600 text-sm font-bold mt-1" id="response"{
+                (e)
             }
         }
         ).into_response();
